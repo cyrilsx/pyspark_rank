@@ -23,11 +23,7 @@ def load():
     :see: Hint: use article.parseLine for the transformation
     """
     logger.info("Prepare spark contest and load data")
-    conf = SparkConf().setMaster('local').setAppName("Ranking App")\
-        .set("spark.executor.memory", "3g").set("spark.driver.memory", "3g").set("spark.python.worker.memory", "3g") \
-        .set("spark.driver.maxResultsSize", 0)
-    sc = SparkContext(conf=conf)
-    return sc.textFile("data/wikipedia.dat").map(lambda x: parse_line(x))
+    raise NotImplemented
 
 
 def occurrence_of_word(word: str, rdd: RDD):
@@ -43,8 +39,7 @@ def occurrence_of_word(word: str, rdd: RDD):
     :param rdd: dataset of articles
     :return: the number of occurrence of the word
     """
-    return rdd.filter(lambda a: word in a.content.split(" ")) \
-        .aggregate(0, lambda x, y: x + 1, lambda x, y: x + y)
+    raise NotImplemented
 
 
 def native_rank(words: list, rdd: RDD):
@@ -59,19 +54,7 @@ def native_rank(words: list, rdd: RDD):
     :param rdd: dataset of articles
     :return: list of pair (word, nb occ)
     """
-    result = []
-    for word in words:
-        result.append((word, occurrence_of_word(word, rdd)))
-    result.sort(key=lambda x: x[1], reverse=True)
-    return result
-
-
-def filter_words(words, article):
-    result = []
-    for word in words:
-        if article.mentions_word(word):
-            result.append((word, article))
-    return result
+    raise NotImplemented
 
 
 def make_index(words: list, rdd: RDD):
@@ -82,7 +65,7 @@ def make_index(words: list, rdd: RDD):
     :param rdd:
     :return: the word with the list of article containing this word
     """
-    return rdd.flatMap(lambda article: filter_words(words, article)).groupByKey()
+    raise NotImplemented
 
 
 def rank_using_reverted_index(index: RDD):
@@ -91,9 +74,7 @@ def rank_using_reverted_index(index: RDD):
     :param index:
     :return:
     """
-    return index.map(lambda lang_article: (lang_article[0], len(lang_article[1]))) \
-        .sortBy(lambda k: k[1], ascending=False) \
-        .collect()
+    raise NotImplemented
 
 
 def rank_reduce_by_key(words: list, rdd: RDD):
@@ -103,12 +84,7 @@ def rank_reduce_by_key(words: list, rdd: RDD):
     :param rdd: dataset of articles
     :return: list of pair (word, nb occ)
     """
-    return rdd.flatMap(lambda article: filter_words(words, article)) \
-        .map(lambda a: (a[0], 1))\
-        .reduceByKey(lambda a, b: a + b) \
-        .sortBy(lambda k: k[1], ascending=False) \
-        .collect()
-
+    raise NotImplemented
 
 def main():
     logger.info("Start ranking exercice")
